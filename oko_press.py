@@ -16,17 +16,25 @@ for article in soup.find_all('div', class_='large-collapse'):
     print(headline)
     print('')
 
-    link_to_article_text = article.h4.a['href']
+    link_to_article_site = article.h4.a['href']
 
-    article_site = requests.get(link_to_article_text).text
+    article_site = requests.get(link_to_article_site).text
     article_site = BeautifulSoup(article_site, 'lxml')
 
-    image_link = article_site.find('picture').img['src']
+    try:
+        image_link = article_site.find('picture').img['src']
+    except:
+        image_link = None
+        video_link = article_site.find('iframe')['src']
+        print(video_link)
+
     print(image_link)
     print('')
-
-    first_paragraph = article_site.find('div', class_="excerpt").p.text
-
+    try:
+        first_paragraph = article_site.find('div', class_="excerpt").p.text
+    except:
+        first_paragraph = ''
+        
     other_paragraphs = article_site.find('div', class_="entry-content")
     filtered_paragraphs_list = [first_paragraph]
     for paragraph in other_paragraphs:
