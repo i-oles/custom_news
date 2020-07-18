@@ -5,7 +5,7 @@ source = requests.get('https://oko.press').text
 soup = BeautifulSoup(source, 'lxml')
 
 
-for article in soup.find_all('div', class_='large-collapse'):
+for article in soup.find_all('div', class_='grid-overlay'):
     try:
         try:
             article_subject = article.find('div', class_='sub-category-name').text
@@ -16,7 +16,11 @@ for article in soup.find_all('div', class_='large-collapse'):
             print(article_subject)
             print('')
 
-        link_to_article_site = article.a['href']
+# here i had finished, correct it
+        try:
+            link_to_article_site = article.find('a', class_='img')['href']
+        except:
+            link_to_article_site = article.find('a')['href']
 
         article_site = requests.get(link_to_article_site).text
         article_site = BeautifulSoup(article_site, 'lxml')
