@@ -4,17 +4,17 @@ import requests
 source = requests.get('https://oko.press').text
 soup = BeautifulSoup(source, 'lxml')
 
+def find_article_subject(tag, tag_class):
+    article_subject = article.find(tag, class_=tag_class).text
+    return article_subject
+
 
 for article in soup.find_all('div', class_='large-collapse'):
     try:
         try:
-            article_subject = article.find('div', class_='sub-category-name').text
-            print(article_subject)
-            print('')
+            find_article_subject('div', 'sub-category-name')
         except:
-            article_subject = article.find('span', class_='subcategory-title').text
-            print(article_subject)
-            print('')
+            find_article_subject('span', 'subcategory-title')
 
         link_to_article_site = article.a['href']
 
