@@ -16,8 +16,9 @@ for div_tag in soup.find_all('div', class_='large-collapse'):
         pass
     all_articles_links.append(next_article_link)
 
+NUM_OF_SELECTED_ARTICLES = 6
 
-for article in all_articles_links:
+for article_link in all_articles_links[:NUM_OF_SELECTED_ARTICLES]:
     try:
         article_subject = soup.find('div', class_='sub-category-name').text
         print(f"Subject of article: {article_subject}")
@@ -27,18 +28,17 @@ for article in all_articles_links:
         print(f"Subject of article: {article_subject}")
         print('\n')
 
-    article_site = requests.get(article).text
+    article_site = requests.get(article_link).text
     article_site = BeautifulSoup(article_site, 'lxml')
 
-# correct it
-"""
-    article_author = ''
-    article_date = ''
+    article_date = article_site.find(‘time’, class_=’updated’).text
+    print(f’article date: {article_date}’)
 
-    article_headline = article.h4.a.text
+    article_author = article_site.find('span', class_='meta-section__autor').a.text
+    print(f’article author: {article_author}’)
+
+    article_headline = article_site.find(‘h1’, class_=’title smaller-post-title’).span.text
     print(article_headline)
-    print('')
-"""
 
     try:
         image_link = article_site.find('div', class_='slider_home_page slider_in_post')
@@ -52,37 +52,33 @@ for article in all_articles_links:
         video_link = video_link.find('iframe')['src']
         print("Link to video:")
         print(video_link)
-    except AttributeError:
+    except AttributeError, TypeError, KeyError:
         video_link = None
-    except TypeError:
-        video_link = None
-    except KeyError:
-        video_link = None
+    print('\n')
 
-    print('')
+    all_paragraphs_list = []
 
     try:
         first_paragraph = article_site.find('div', class_="excerpt").p.text
     except:
         first_paragraph = ''
 
+    all_paragraphs_list.append(first_paragraph)
+
     other_paragraphs = article_site.find('div', class_="entry-content")
-    filtered_paragraphs_list = [first_paragraph]
     for paragraph in other_paragraphs:
         if paragraph in other_paragraphs.find_all('p'):
-            filtered_paragraphs_list.append(paragraph.text)
+            all_paragraphs_list.append(paragraph.text)
         elif paragraph in other_paragraphs.find_all('h2'):
-            filtered_paragraphs_list.append(paragraph.text)
+            all_paragraphs_list.append(paragraph.text)
         elif paragraph in other_paragraphs.find_all('blockquote'):
-            filtered_paragraphs_list.append(paragraph.text)
+            all_paragraphs_list.append(paragraph.text)
         elif paragraph in other_paragraphs.find_all('ul'):
-            filtered_paragraphs_list.append(paragraph.text)
+            all_paragraphs_list.append(paragraph.text)
         elif paragraph in other_paragraphs.find_all('tr'):
-            filtered_paragraphs_list.append(paragraph.text)
+            all_paragraphs_list.append(paragraph.text)
         elif paragraph in other_paragraphs.find_all('img'):
-            filtered_paragraphs_list.append(paragraph.get('src'))
+            all_paragraphs_list.append(paragraph.get('src'))
 
-    all_paragraphs = ('\n').join(filtered_paragraphs_list)
+    all_paragraphs = ('\n').join(all_paragraphs_list)
     print(all_paragraphs)
-
-"""
