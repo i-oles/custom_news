@@ -5,6 +5,7 @@ source = requests.get('https://oko.press').text
 soup = BeautifulSoup(source, 'lxml')
 
 # correct it \n thing
+# correct: comeback to lists
 articles_links_and_subjects_dict = {}
 
 main_article_link = soup.find('div', class_='home-page').a.attrs['href']
@@ -19,16 +20,17 @@ for div_tag in soup.find_all('div', class_='large-collapse'):
         pass
     articles_links_and_subjects_dict[next_article_link] = next_article_subject
 
-#NUM_OF_SELECTED_ARTICLES = 6
+NUM_OF_SELECTED_ARTICLES = 6
 #for article_link in all_articles_links[:NUM_OF_SELECTED_ARTICLES]:
-for article_link in all_articles_links:
 
-# correct it: print(f"Subject of article: {article_subject}")
+for article_link, article_subject in articles_links_and_subjects_dict.items(NUM_OF_SELECTED_ARTICLES):
 
     article_site = requests.get(article_link).text
     article_site = BeautifulSoup(article_site, 'lxml')
 
 # correct it: different tag then time
+
+    print(f"Subject of article: {article_subject}")
 
     article_date = article_site.find('time', class_='updated').text
     print(f'article date: {article_date}')
