@@ -4,48 +4,48 @@ import requests
 source = requests.get('https://oko.press').text
 soup = BeautifulSoup(source, 'lxml')
 
-# correct it \n thing
-# correct: comeback to lists
-articles_links_and_subjects_dict = {}
+list_of_articles_links = []
+list_of_articles_subjects = []
 
 main_article_link = soup.find('div', class_='home-page').a.attrs['href']
-main_article_subject = soup.find('span', class_='subcategory-title').text
-articles_links_and_subjects_dict[main_article_link] = main_article_subject
+main_article_subject = soup.find('h1', class_='title').span.text
+list_of_articles_links.append(main_article_link)
+list_of_articles_subjects.append(main_article_subject)
 
 for div_tag in soup.find_all('div', class_='large-collapse'):
     try:
         next_article_link = div_tag.find('h4').a.attrs['href']
         next_article_subject = div_tag.find('div', class_='sub-category-name').text
+        list_of_articles_links.append(next_article_link)
+        list_of_articles_subjects.append(next_article_subject)
     except:
         pass
-    articles_links_and_subjects_dict[next_article_link] = next_article_subject
 
-NUM_OF_SELECTED_ARTICLES = 6
-#for article_link in all_articles_links[:NUM_OF_SELECTED_ARTICLES]:
-
-for article_link, article_subject in articles_links_and_subjects_dict.items(NUM_OF_SELECTED_ARTICLES):
+USERS_ARTICLES_QUANTITY = 6
+#for subject_index, article_link in enumerate(list_of_articles_links[0:USERS_ARTICLES_QUANTITY]):
+for subject_index, article_link in enumerate(list_of_articles_links):
 
     article_site = requests.get(article_link).text
     article_site = BeautifulSoup(article_site, 'lxml')
 
-# correct it: different tag then time
+    article_subject = list_of_articles_subjects[subject_index].strip()
+    print(f'article subject: {article_subject}')
 
-    print(f"Subject of article: {article_subject}")
+    try:
+        article_date = article_site.find('time')
+        print(f'article date: {article_date.text}')
+        article_author = article_site.find('span', class_='meta-section__autor').a.text
+        print(f'article author: {article_author}')
+        article_headline = article_site.find('h1', class_='title smaller-post-title').span.text
+    except:
+        article_headline = article_site.find('h1', class_='title').span.text
 
-    article_date = article_site.find('time', class_='updated').text
-    print(f'article date: {article_date}')
-
-    article_author = article_site.find('span', class_='meta-section__autor').a.text
-    print(f'article author: {article_author}')
-
-    article_headline = article_site.find('h1', class_='title smaller-post-title').span.text
-    print(article_headline)
+    print(f'article title: {article_headline}')
 
     try:
         image_link = article_site.find('div', class_='slider_home_page slider_in_post')
         image_link = image_link.picture.source['data-srcset']
         print(image_link)
-        # add image author
     except AttributeError:
         print("There is no image added to this article.")
     
@@ -85,4 +85,5 @@ for article_link, article_subject in articles_links_and_subjects_dict.items(NUM_
 
     all_paragraphs = ('\n').join(all_paragraphs_list)
     print(all_paragraphs)
+    print('\n\n')
 
