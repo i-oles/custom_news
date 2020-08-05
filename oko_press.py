@@ -21,9 +21,9 @@ for div_tag in soup.find_all('div', class_='large-collapse'):
     except:
         pass
 
-USERS_ARTICLES_QUANTITY = 6
-#for subject_index, article_link in enumerate(list_of_articles_links[0:USERS_ARTICLES_QUANTITY]):
-for subject_index, article_link in enumerate(list_of_articles_links):
+USERS_ARTICLES_QUANTITY = 1
+for subject_index, article_link in enumerate(list_of_articles_links[0:USERS_ARTICLES_QUANTITY]):
+#for subject_index, article_link in enumerate(list_of_articles_links):
 
     article_site = requests.get(article_link).text
     article_site = BeautifulSoup(article_site, 'lxml')
@@ -54,7 +54,6 @@ for subject_index, article_link in enumerate(list_of_articles_links):
         video_link = video_link.find('iframe')['src']
         print("Link to video:")
         print(video_link)
-    # AttributeError, TypeError, KeyError
     except:
         video_link = None
     print('\n')
@@ -75,13 +74,13 @@ for subject_index, article_link in enumerate(list_of_articles_links):
         elif paragraph in other_paragraphs.find_all('h2'):
             all_paragraphs_list.append(paragraph.text)
         elif paragraph in other_paragraphs.find_all('blockquote'):
-            all_paragraphs_list.append(paragraph.text)
+            all_paragraphs_list.append(paragraph.p.text)
         elif paragraph in other_paragraphs.find_all('ul'):
             all_paragraphs_list.append(paragraph.text)
         elif paragraph in other_paragraphs.find_all('tr'):
             all_paragraphs_list.append(paragraph.text)
         elif paragraph in other_paragraphs.find_all('img'):
-            all_paragraphs_list.append(paragraph.get('src'))
+            all_paragraphs_list.append(paragraph.attrs['src'])
 
     all_paragraphs = ('\n').join(all_paragraphs_list)
     print(all_paragraphs)
