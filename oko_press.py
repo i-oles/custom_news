@@ -4,8 +4,10 @@ import requests
 source = requests.get('https://oko.press').text
 soup = BeautifulSoup(source, 'lxml')
 
+
 list_of_articles_links = []
 list_of_articles_subjects = []
+
 
 main_article_link = soup.find('div', class_='home-page').a.attrs['href']
 main_article_subject = soup.find('h1', class_='title').span.text
@@ -21,8 +23,10 @@ for div_tag in soup.find_all('div', class_='large-collapse'):
     except:
         pass
 
-USERS_ARTICLES_QUANTITY = 1
-for subject_index, article_link in enumerate(list_of_articles_links[0:USERS_ARTICLES_QUANTITY]):
+# -------> number of articles to display from all articles
+ARTICLES_TO_READ = 6
+
+for subject_index, article_link in enumerate(list_of_articles_links[0:ARTICLES_TO_READ]):
 #for subject_index, article_link in enumerate(list_of_articles_links):
 
     article_site = requests.get(article_link).text
